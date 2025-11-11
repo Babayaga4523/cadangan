@@ -1,0 +1,37 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/app/stores/auth';
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!user) {
+        router.replace('/login');
+        return;
+      }
+
+      if (user.role === 'admin') {
+        router.replace('/admin/dashboard');
+      } else if (user.role === 'siswa') {
+        router.replace('/student/dashboard');
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [user, router]);
+
+  // Loading view
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
+        <p className="mt-4 text-gray-600">Mengarahkan ke halaman dashboard...</p>
+      </div>
+    </div>
+  );
+}

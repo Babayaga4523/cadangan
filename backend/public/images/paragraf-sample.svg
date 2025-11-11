@@ -1,0 +1,24 @@
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="500" fill="#FFFFFF"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="24" fill="#000000" text-anchor="middle" font-weight="bold">Menjaga Kebersihan Lingkungan</text>
+  
+  <!-- Paragraph box -->
+  <rect x="50" y="60" width="700" height="380" fill="#F9F9F9" stroke="#CCCCCC" stroke-width="2" rx="10"/>
+  
+  <!-- Paragraph text -->
+  <text x="80" y="100" font-family="Arial" font-size="18" fill="#333333">
+    <tspan x="80" dy="0">Kebersihan lingkungan sangat penting bagi kesehatan kita.</tspan>
+    <tspan x="80" dy="35">Lingkungan yang bersih akan membuat kita terhindar dari</tspan>
+    <tspan x="80" dy="35">berbagai penyakit. Sebaliknya, lingkungan yang kotor dapat</tspan>
+    <tspan x="80" dy="35">menjadi sarang penyakit seperti demam berdarah, diare, dan</tspan>
+    <tspan x="80" dy="35">penyakit kulit.</tspan>
+    <tspan x="80" dy="50">Oleh karena itu, kita harus selalu menjaga kebersihan</tspan>
+    <tspan x="80" dy="35">lingkungan. Caranya adalah dengan membuang sampah pada</tspan>
+    <tspan x="80" dy="35">tempatnya, membersihkan rumah secara teratur, dan tidak</tspan>
+    <tspan x="80" dy="35">meludah sembarangan. Dengan lingkungan yang bersih, kita</tspan>
+    <tspan x="80" dy="35">akan hidup lebih sehat dan nyaman.</tspan>
+  </text>
+</svg>

@@ -1,0 +1,447 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/app/stores/auth";
+import { fetchWithAuth } from "@/app/utils/api";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Save,
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff
+} from "lucide-react";
+
+interface ProfileForm {
+  name: string;
+  email: string;
+  current_password?: string;
+  password?: string;
+  password_confirmation?: string;
+}
+
+export default function StudentProfilePage() {
+  const router = useRouter();
+  const { user } = useAuthStore();
+  const [profile, setProfile] = useState<ProfileForm | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [changePassword, setChangePassword] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    if (user.role !== 'siswa') {
+      router.push('/dashboard/admin');
+      return;
+    }
+
+    fetchProfile();
+  }, [user, router]);
+
+  const fetchProfile = async () => {
+    try {
+      const data = await fetchWithAuth('/me');
+      setProfile({
+        name: data.name || '',
+        email: data.email || '',
+      });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setErrors({});
+
+    try {
+      const updateData: Record<string, string | undefined> = {
+        name: profile?.name,
+        email: profile?.email,
+      };
+
+      if (changePassword) {
+        updateData.current_password = profile?.current_password;
+        updateData.password = profile?.password;
+        updateData.password_confirmation = profile?.password_confirmation;
+      }
+
+      await fetchWithAuth('/profile', {
+        method: 'PUT',
+        body: JSON.stringify(updateData),
+      });
+
+      // Refresh profile data
+      await fetchProfile();
+
+      router.push('/dashboard/student');
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as { response?: { data?: { errors?: Record<string, string> } } };
+        if (err.response?.data?.errors) {
+          setErrors(err.response.data.errors);
+        }
+      } else {
+        console.error('Error updating profile:', error);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleChange = (field: keyof ProfileForm, value: string) => {
+    if (profile) {
+      setProfile({
+        ...profile,
+        [field]: value
+      });
+    }
+  };
+
+  if (!user || user.role !== 'siswa') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="px-4 py-5 sm:p-6">
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                <div className="space-y-3">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="text-center text-gray-500">
+            Profil tidak ditemukan
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
+      {/* Header */}
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 pt-8">
+        <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                  <User className="h-8 w-8" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-4 border-white shadow-md"></div>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-1">Profil Siswa</h1>
+                <p className="text-gray-600">Kelola informasi akun dan pengaturan Anda</p>
+              </div>
+            </div>
+            <Link
+              href="/dashboard/student"
+              className="inline-flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 font-semibold hover:from-orange-200 hover:to-orange-300 transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              Kembali ke Dashboard
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Profile Overview Card */}
+          <div className="lg:col-span-1">
+            <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
+              <div className="text-center">
+                <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">{profile?.name}</h3>
+                <p className="text-gray-600 mb-4">{profile?.email}</p>
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  Siswa Aktif
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Role</span>
+                    <span className="font-semibold text-gray-900">Siswa</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Bergabung</span>
+                    <span className="font-semibold text-gray-900">2024</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Edit Profile Form */}
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl shadow-xl shadow-blue-100/50 overflow-hidden">
+              <div className="px-8 py-6 border-b border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-900">Edit Profil</h2>
+                <p className="text-gray-600 mt-1">Perbarui informasi pribadi Anda</p>
+              </div>
+
+              <div className="px-8 py-6">
+                <div className="space-y-8">
+                  {/* Name */}
+                  <div className="group">
+                    <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-3">
+                      Nama Lengkap
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <User className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                      </div>
+                      <input
+                        type="text"
+                        id="name"
+                        value={profile.name}
+                        onChange={(e) => handleChange('name', e.target.value)}
+                        className="block w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+                        placeholder="Masukkan nama lengkap"
+                        required
+                      />
+                    </div>
+                    {errors.name && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center">
+                        <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Email */}
+                  <div className="group">
+                    <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-3">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                      </div>
+                      <input
+                        type="email"
+                        id="email"
+                        value={profile.email}
+                        onChange={(e) => handleChange('email', e.target.value)}
+                        className="block w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+                        placeholder="Masukkan alamat email"
+                        required
+                      />
+                    </div>
+                    {errors.email && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center">
+                        <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Change Password Section */}
+                  <div className="border-t border-gray-100 pt-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">Keamanan Akun</h3>
+                        <p className="text-gray-600 text-sm">Ubah kata sandi untuk menjaga keamanan akun</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={changePassword}
+                          onChange={(e) => setChangePassword(e.target.checked)}
+                          className="sr-only peer"
+                          aria-label="Ubah kata sandi"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        <span className="ml-3 text-sm font-medium text-gray-700">Ubah kata sandi</span>
+                      </label>
+                    </div>
+
+                    {/* Password Fields */}
+                    {changePassword && (
+                      <div className="space-y-6 animate-in slide-in-from-top-2 duration-300">
+                        {/* Current Password */}
+                        <div className="group">
+                          <label htmlFor="current_password" className="block text-sm font-semibold text-gray-700 mb-3">
+                            Kata Sandi Lama
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                              <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                            </div>
+                            <input
+                              type={showCurrentPassword ? "text" : "password"}
+                              id="current_password"
+                              value={profile.current_password || ''}
+                              onChange={(e) => handleChange('current_password', e.target.value)}
+                              className="block w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+                              placeholder="Masukkan kata sandi lama"
+                              required={changePassword}
+                            />
+                            <button
+                              type="button"
+                              className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-orange-500 transition-colors"
+                              onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            >
+                              {showCurrentPassword ? (
+                                <EyeOff className="h-5 w-5" />
+                              ) : (
+                                <Eye className="h-5 w-5" />
+                              )}
+                            </button>
+                          </div>
+                          {errors.current_password && (
+                            <p className="mt-2 text-sm text-red-600 flex items-center">
+                              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+                              {errors.current_password}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* New Password */}
+                        <div className="group">
+                          <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-3">
+                            Kata Sandi Baru
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                              <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                            </div>
+                            <input
+                              type={showNewPassword ? "text" : "password"}
+                              id="password"
+                              value={profile.password || ''}
+                              onChange={(e) => handleChange('password', e.target.value)}
+                              className="block w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+                              placeholder="Minimal 8 karakter"
+                              required={changePassword}
+                              minLength={8}
+                            />
+                            <button
+                              type="button"
+                              className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-orange-500 transition-colors"
+                              onClick={() => setShowNewPassword(!showNewPassword)}
+                            >
+                              {showNewPassword ? (
+                                <EyeOff className="h-5 w-5" />
+                              ) : (
+                                <Eye className="h-5 w-5" />
+                              )}
+                            </button>
+                          </div>
+                          {errors.password && (
+                            <p className="mt-2 text-sm text-red-600 flex items-center">
+                              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+                              {errors.password}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Confirm Password */}
+                        <div className="group">
+                          <label htmlFor="password_confirmation" className="block text-sm font-semibold text-gray-700 mb-3">
+                            Konfirmasi Kata Sandi Baru
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                              <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                            </div>
+                            <input
+                              type={showConfirmPassword ? "text" : "password"}
+                              id="password_confirmation"
+                              value={profile.password_confirmation || ''}
+                              onChange={(e) => handleChange('password_confirmation', e.target.value)}
+                              className="block w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-sm bg-gray-50 focus:bg-white transition-all duration-200"
+                              placeholder="Konfirmasi kata sandi baru"
+                              required={changePassword}
+                              minLength={8}
+                            />
+                            <button
+                              type="button"
+                              className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-orange-500 transition-colors"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                              {showConfirmPassword ? (
+                                <EyeOff className="h-5 w-5" />
+                              ) : (
+                                <Eye className="h-5 w-5" />
+                              )}
+                            </button>
+                          </div>
+                          {errors.password_confirmation && (
+                            <p className="mt-2 text-sm text-red-600 flex items-center">
+                              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+                              {errors.password_confirmation}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-t border-gray-100 flex justify-end gap-4">
+                <Link
+                  href="/dashboard/student"
+                  className="inline-flex items-center px-6 py-3 border-2 border-gray-200 shadow-sm text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                >
+                  Batal
+                </Link>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="inline-flex items-center px-8 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <Save className="h-5 w-5 mr-2" />
+                  {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

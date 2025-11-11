@@ -1,0 +1,103 @@
+<svg width="800" height="900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="900" fill="#FFFFFF"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="28" fill="#000000" text-anchor="middle" font-weight="bold">LAMBANG PANCASILA</text>
+  
+  <!-- Shield background -->
+  <path d="M 400 100 L 300 180 L 300 450 Q 400 550 500 450 L 500 180 Z" fill="#FFFFFF" stroke="#000000" stroke-width="3"/>
+  
+  <!-- Section 1 - Top (Bintang) - HITAM background -->
+  <path d="M 400 100 L 350 150 L 400 280 L 450 150 Z" fill="#000000"/>
+  
+  <!-- Star (Bintang) -->
+  <path d="M 400 150 L 410 180 L 442 180 L 417 200 L 427 230 L 400 210 L 373 230 L 383 200 L 358 180 L 390 180 Z" fill="#FFD700"/>
+  
+  <!-- Label 1 -->
+  <circle cx="480" cy="180" r="18" fill="#FF0000"/>
+  <text x="480" y="188" font-family="Arial" font-size="20" fill="#FFFFFF" text-anchor="middle" font-weight="bold">1</text>
+  
+  <!-- Section 2 - Left Top (Rantai) - MERAH background -->
+  <path d="M 350 150 L 300 180 L 300 280 L 350 280 L 400 280 Z" fill="#DC143C"/>
+  
+  <!-- Chain links -->
+  <circle cx="330" cy="220" r="12" fill="none" stroke="#FFD700" stroke-width="3"/>
+  <circle cx="350" cy="220" r="12" fill="none" stroke="#FFD700" stroke-width="3"/>
+  <circle cx="340" cy="238" r="12" fill="none" stroke="#FFD700" stroke-width="3"/>
+  
+  <!-- Label 2 -->
+  <circle cx="260" cy="230" r="18" fill="#FF0000"/>
+  <text x="260" y="238" font-family="Arial" font-size="20" fill="#FFFFFF" text-anchor="middle" font-weight="bold">2</text>
+  
+  <!-- Section 3 - Right Top (Beringin) - MERAH background -->
+  <path d="M 450 150 L 400 280 L 450 280 L 500 280 L 500 180 Z" fill="#DC143C"/>
+  
+  <!-- Tree (Beringin) - simplified -->
+  <rect x="460" y="240" width="8" height="30" fill="#8B4513"/>
+  <ellipse cx="464" cy="230" rx="25" ry="20" fill="#228B22"/>
+  
+  <!-- Label 3 -->
+  <circle cx="540" cy="230" r="18" fill="#FF0000"/>
+  <text x="540" y="238" font-family="Arial" font-size="20" fill="#FFFFFF" text-anchor="middle" font-weight="bold">3</text>
+  
+  <!-- Section 4 - Left Bottom (Banteng) - PUTIH background -->
+  <path d="M 300 280 L 300 450 Q 350 500 400 480 L 400 280 Z" fill="#FFFFFF" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Buffalo head (simplified) -->
+  <ellipse cx="350" cy="370" rx="20" ry="25" fill="#000000"/>
+  <circle cx="345" cy="365" r="3" fill="#FFFFFF"/>
+  <circle cx="355" cy="365" r="3" fill="#FFFFFF"/>
+  <path d="M 340 355 Q 335 350 330 355" stroke="#000000" stroke-width="3" fill="none"/>
+  <path d="M 360 355 Q 365 350 370 355" stroke="#000000" stroke-width="3" fill="none"/>
+  
+  <!-- Label 4 -->
+  <circle cx="260" cy="370" r="18" fill="#FF0000"/>
+  <text x="260" y="378" font-family="Arial" font-size="20" fill="#FFFFFF" text-anchor="middle" font-weight="bold">4</text>
+  
+  <!-- Section 5 - Right Bottom (Padi Kapas) - PUTIH background -->
+  <path d="M 400 280 L 400 480 Q 450 500 500 450 L 500 280 Z" fill="#FFFFFF" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Rice (Padi) on left -->
+  <line x1="440" y1="340" x2="440" y2="400" stroke="#8B4513" stroke-width="2"/>
+  <ellipse cx="438" cy="338" rx="3" ry="5" fill="#FFD700"/>
+  <ellipse cx="442" cy="338" rx="3" ry="5" fill="#FFD700"/>
+  <ellipse cx="437" cy="345" rx="3" ry="5" fill="#FFD700"/>
+  <ellipse cx="443" cy="345" rx="3" ry="5" fill="#FFD700"/>
+  
+  <!-- Cotton (Kapas) on right -->
+  <line x1="460" y1="340" x2="460" y2="400" stroke="#8B4513" stroke-width="2"/>
+  <circle cx="456" cy="340" r="5" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
+  <circle cx="464" cy="340" r="5" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
+  <circle cx="456" cy="350" r="5" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
+  <circle cx="464" cy="350" r="5" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
+  
+  <!-- Label 5 -->
+  <circle cx="540" cy="370" r="18" fill="#FF0000"/>
+  <text x="540" y="378" font-family="Arial" font-size="20" fill="#FFFFFF" text-anchor="middle" font-weight="bold">5</text>
+  
+  <!-- Legend -->
+  <rect x="50" y="600" width="700" height="250" fill="#F0F0F0" stroke="#000000" stroke-width="2" rx="10"/>
+  
+  <text x="400" y="635" font-family="Arial" font-size="22" fill="#000000" text-anchor="middle" font-weight="bold">KETERANGAN SILA-SILA PANCASILA</text>
+  
+  <text x="70" y="675" font-family="Arial" font-size="18" fill="#000000">
+    <tspan x="70" dy="0" font-weight="bold">1. Ketuhanan Yang Maha Esa</tspan>
+    <tspan x="90" dy="25">(Lambang: Bintang)</tspan>
+    
+    <tspan x="70" dy="40" font-weight="bold">2. Kemanusiaan yang Adil dan Beradab</tspan>
+    <tspan x="90" dy="25">(Lambang: Rantai)</tspan>
+    
+    <tspan x="70" dy="40" font-weight="bold">3. Persatuan Indonesia</tspan>
+    <tspan x="90" dy="25">(Lambang: Pohon Beringin)</tspan>
+  </text>
+  
+  <text x="420" y="675" font-family="Arial" font-size="18" fill="#000000">
+    <tspan x="420" dy="0" font-weight="bold">4. Kerakyatan yang Dipimpin oleh Hikmat</tspan>
+    <tspan x="430" dy="25">Kebijaksanaan dalam Permusyawaratan</tspan>
+    <tspan x="430" dy="25">Perwakilan (Lambang: Kepala Banteng)</tspan>
+    
+    <tspan x="420" dy="40" font-weight="bold">5. Keadilan Sosial bagi Seluruh Rakyat</tspan>
+    <tspan x="430" dy="25">Indonesia (Lambang: Padi dan Kapas)</tspan>
+  </text>
+</svg>

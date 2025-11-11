@@ -1,0 +1,30 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#87CEEB"/>
+  
+  <!-- Sun -->
+  <circle cx="150" cy="100" r="50" fill="#FFD700"/>
+  
+  <!-- Mountain 1 (main) -->
+  <polygon points="400,600 200,200 600,600" fill="#8B4513"/>
+  <polygon points="400,600 200,200 500,600" fill="#A0522D"/>
+  
+  <!-- Mountain peak (snow) -->
+  <polygon points="400,200 350,280 450,280" fill="#FFFFFF"/>
+  
+  <!-- Mountain 2 (background) -->
+  <polygon points="650,600 500,300 800,600" fill="#654321"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="500" width="800" height="100" fill="#228B22"/>
+  
+  <!-- Trees -->
+  <rect x="100" y="480" width="30" height="80" fill="#8B4513"/>
+  <polygon points="115,480 70,430 160,430" fill="#006400"/>
+  
+  <rect x="700" y="480" width="30" height="80" fill="#8B4513"/>
+  <polygon points="715,480 670,430 760,430" fill="#006400"/>
+  
+  <!-- Label -->
+  <text x="400" y="580" font-family="Arial" font-size="24" fill="#000000" text-anchor="middle" font-weight="bold">GUNUNG</text>
+</svg>

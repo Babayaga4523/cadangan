@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Full KELASKU mark + wordmark SVG -->
+<svg width="520" height="120" viewBox="0 0 520 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+  <defs>
+    <linearGradient id="gf1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#FF7321" />
+      <stop offset="100%" stop-color="#FF541A" />
+    </linearGradient>
+    <linearGradient id="gf2" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#FFD6C3" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#FFB28A" stop-opacity="0.95" />
+    </linearGradient>
+  </defs>
+
+  <!-- mark -->
+  <g transform="translate(8,8)">
+    <rect x="0" y="0" width="104" height="104" rx="16" ry="16" fill="url(#gf1)" />
+    <path d="M78 88c4 0 8-3 8-7V32c0-4-3-7-7-7H34L78 88z" fill="#FF8A4B" opacity="0.98" />
+    <path d="M78 88c4 0 8-3 8-7L38 28c-2-1-4 0-5 2-1 2 0 3 1 5L78 88z" fill="url(#gf2)" opacity="0.95"/>
+  </g>
+
+  <!-- wordmark -->
+  <g transform="translate(140,78)">
+    <text x="0" y="0" font-family="Inter, Poppins, 'Nunito Sans', Arial, sans-serif" font-weight="600" font-size="48" fill="#111827">KELASKU</text>
+  </g>
+
+</svg>
