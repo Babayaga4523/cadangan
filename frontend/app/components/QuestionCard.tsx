@@ -1,12 +1,13 @@
 "use client";
 
 import type { Question } from "@/app/types/cbt";
+import Image from 'next/image';
 
 type QuestionCardProps = {
   question: Question;
   questionNumber: number;
-  selectedAnswerId: number | null;
-  onSelectAnswer: (questionId: string, answerId: number, answerText: string) => void;
+  selectedAnswerId: string | null;
+  onSelectAnswer: (questionId: string, answerId: string, answerText: string) => void;
   apiBaseUrl: string;
 };
 
@@ -37,12 +38,23 @@ export default function QuestionCard({
       {/* Stimulus Gambar */}
       {question.stimulus && question.stimulus_type === "image" && (
         <div className="flex justify-center mb-6">
-          {/* Gunakan path langsung, bukan /storage/ */}
-          <img
-            src={`${apiBaseUrl}${question.stimulus}`}
+          {/* Handle both full URLs and relative paths */}
+          <Image
+            src={question.stimulus.startsWith('http') 
+              ? question.stimulus 
+              : question.stimulus.startsWith('/storage/') 
+                ? `${apiBaseUrl}${question.stimulus}` 
+                : question.stimulus.startsWith('/images/') 
+                  ? `${apiBaseUrl}/storage${question.stimulus}` 
+                  : `${apiBaseUrl}/storage/images/${question.stimulus}`}
             alt="Stimulus Gambar"
-            className="rounded-xl border border-gray-200 shadow-sm object-contain max-w-full"
-            style={{ maxHeight: '320px', backgroundColor: '#f8fafc' }}
+            width={800}
+            height={320}
+            className="rounded-xl border border-gray-200 shadow-sm object-contain max-w-full bg-slate-50"
+            onError={(e) => {
+              console.error('Image failed to load:', question.stimulus);
+              e.currentTarget.style.display = 'none';
+            }}
           />
         </div>
       )}
@@ -67,10 +79,10 @@ export default function QuestionCard({
               type="radio"
               name={`question-${question.id}`}
               className="mr-3 accent-orange-500"
-              checked={selectedAnswerId === opt.id}
-              onChange={() => onSelectAnswer(String(question.id), Number(opt.id), opt.answer_text)}
+              checked={selectedAnswerId === String(opt.id)}
+              onChange={() => onSelectAnswer(String(question.id), String(opt.id), opt.answer_text)}
             />
-            {opt.answer_text}
+            {opt.answer_text || <span className="text-gray-400 italic">(Pilihan kosong)</span>}
           </label>
         ))}
       </div>

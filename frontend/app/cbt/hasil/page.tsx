@@ -1,6 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from 'next/image';
 import { fetchWithAuthRaw } from "@/app/utils/api";
 
 interface QuestionReview {
@@ -47,21 +48,21 @@ function QuestionImage({ content, alt, className }: { content?: string; alt?: st
   if (!candidates.length || !visible) return null;
   const src = candidates[idx];
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={src}
-      alt={alt}
+      alt={alt || ''}
+      width={460}
+      height={320}
       className={className}
-      loading="lazy"
-      onError={(e) => {
+      onError={() => {
         if (idx + 1 < candidates.length) setIdx((s) => s + 1);
-        else (e.currentTarget as HTMLImageElement).style.display = "none";
+        else setVisible(false);
       }}
     />
   );
 }
 
-export default function HasilCBTPage() {
+function HasilCBTContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const attemptId =
@@ -375,14 +376,12 @@ export default function HasilCBTPage() {
                 <h4 className="font-semibold text-gray-700 mb-4">Daftar Soal</h4>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(40px,1fr))] gap-2 mb-4 max-w-xs">
                   {review.questions.map((qi, i) => {
-                    const isBlank = !qi.user_answer;
-                    const cls = qi
-                      ? qi.is_correct
-                        ? "bg-green-600 text-white"
-                        : isBlank
-                        ? "bg-gray-200 text-gray-700"
-                        : "bg-red-600 text-white"
-                      : "bg-gray-200 text-gray-700";
+                    const isBlank = !qi.user_answer || qi.user_answer.trim() === '';
+                    const cls = qi.is_correct
+                      ? "bg-green-600 text-white"
+                      : isBlank
+                      ? "bg-gray-200 text-gray-700"
+                      : "bg-red-600 text-white";
                     return (
                       <button
                         key={i}
@@ -425,6 +424,11 @@ export default function HasilCBTPage() {
                             </div>
                           </div>
                         )}
+                        {qq.stimulus_type === "text" && qq.stimulus_content && (
+                          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p className="text-sm text-blue-800">{qq.stimulus_content}</p>
+                          </div>
+                        )}
                         <p className="mb-4 text-gray-800 text-sm leading-relaxed">{qq.question_text}</p>
 
                         <div className="space-y-2 mb-4">
@@ -440,16 +444,18 @@ export default function HasilCBTPage() {
                             return (
                               <div key={idx} className={`flex items-start gap-2 p-3 border rounded-lg text-sm ${cls}`}>
                                 <div className="font-semibold min-w-6">{optionLetter}.</div>
-                                <div className="flex-1">{opt}</div>
+                                <div className="flex-1">{opt || 'N/A'}</div>
                               </div>
                             );
                           })}
                         </div>
 
                         <div className="border-t border-gray-300 pt-3">
-                          <div className="flex items-center justify-between">
-                            <p className="font-semibold text-gray-800 mb-1">Jawaban kamu : <span className="font-bold text-red-700">{qq.user_answer || "-"}</span></p>
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-semibold text-gray-800">Jawaban kamu : <span className="font-bold text-red-700">{qq.user_answer || "-"}</span></p>
                             {qq.user_answer && !qq.is_correct && (<div className="text-sm text-red-700 font-semibold">✖ Jawaban kamu salah</div>)}
+                            {qq.user_answer && qq.is_correct && (<div className="text-sm text-green-700 font-semibold">✓ Jawaban kamu benar</div>)}
+                            {!qq.user_answer && (<div className="text-sm text-gray-700 font-semibold">○ Soal belum dijawab</div>)}
                           </div>
 
                           <p className="font-semibold text-gray-800 mb-1 mt-2">Kunci Jawaban : <span className="font-bold text-green-700">{qq.correct_answer || "-"}</span></p>
@@ -465,5 +471,13 @@ export default function HasilCBTPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function HasilCBTPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="text-gray-500">Loading...</div></div>}>
+      <HasilCBTContent />
+    </Suspense>
   );
 }

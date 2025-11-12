@@ -15,9 +15,11 @@ class AttemptController extends Controller
 {
     public function getAttemptAnswers($attemptId)
     {
-        $attempt = Attempt::where('id', $attemptId)->first();
+        $userId = request()->user()->id;
+        
+        $attempt = Attempt::where('id', $attemptId)->where('user_id', $userId)->first();
         if (!$attempt) {
-            return response()->json(['error' => 'Attempt not found'], 404);
+            return response()->json(['error' => 'Attempt not found or access denied'], 404);
         }
 
         $answers = AttemptAnswer::where('attempt_id', $attemptId)->get();
@@ -32,6 +34,14 @@ class AttemptController extends Controller
 
     public function submitAnswer(Request $request, $attemptId)
     {
+        $userId = $request->user()->id;
+        
+        // Verify the attempt belongs to the authenticated user
+        $attempt = Attempt::where('id', $attemptId)->where('user_id', $userId)->first();
+        if (!$attempt) {
+            return response()->json(['error' => 'Attempt not found or access denied'], 404);
+        }
+
         // Get attemptId from route parameter
         $questionId = $request->input('question_id');
         $answerText = $request->input('answer');
@@ -271,10 +281,23 @@ class AttemptController extends Controller
             $userAnswer = $answers[$question->id] ?? null;
             $userAnswerText = $userAnswer ? $userAnswer->answer : null;
 
+            // Map the question options to the expected format - always include all 4 options
+            $options = [];
+            $optionMapping = [
+                'A' => $question->option_a,
+                'B' => $question->option_b,
+                'C' => $question->option_c,
+                'D' => $question->option_d,
+            ];
+
+            foreach ($optionMapping as $key => $value) {
+                $options[] = $value ?: ''; // Include empty options as empty strings
+            }
+
+            // Get correct answer based on correct_answer field
             $correctAnswer = null;
-            if (method_exists($question, 'answers')) {
-                $correctRec = $question->answers()->where('is_correct', true)->first();
-                $correctAnswer = $correctRec ? $correctRec->answer_text : null;
+            if ($question->correct_answer && isset($optionMapping[$question->correct_answer])) {
+                $correctAnswer = $optionMapping[$question->correct_answer];
             }
 
             $isCorrect = $userAnswerText !== null && $correctAnswer !== null && $correctAnswer === $userAnswerText;
@@ -282,12 +305,10 @@ class AttemptController extends Controller
 
             return [
                 'id' => $question->id,
-                'question_text' => $question->question_text,
-                'stimulus_type' => $question->stimulus_type,
+                'question_text' => $question->question,
+                'stimulus_type' => $question->stimulus_type ?: 'none',
                 'stimulus_content' => $question->stimulus,
-                'options' => method_exists($question, 'answers')
-                    ? $question->answers()->pluck('answer_text')->toArray()
-                    : [],
+                'options' => $options,
                 'correct_answer' => $correctAnswer,
                 'user_answer' => $userAnswerText,
                 'is_correct' => $isCorrect,

@@ -105,7 +105,8 @@ export default function HalamanCBT() {
 
       if (!res.ok) {
         const error = await res.json().catch(() => ({}));
-        throw new Error(error.message || 'Gagal menyimpan jawaban');
+        console.error('Submit answer failed:', res.status, error);
+        throw new Error(error.message || `HTTP ${res.status}: ${res.statusText}`);
       }
     } catch (error) {
       console.error('Submit failed:', error);
@@ -131,9 +132,14 @@ export default function HalamanCBT() {
       saveToLocalStorage(answerMap);
       
       // Try to save to server
-      const savePromises = Object.entries(answerMap).map(([questionId, answerId]) => 
-        submitAnswerToAPI(questionId, answerId)
-      );
+      const savePromises = Object.entries(answerMap).map(([questionId, answerId]) => {
+        // Find the question and get the answer text for the selected answer ID
+        const question = questions.find(q => q.id === questionId);
+        const answerOption = question?.answers.find(a => a.id === answerId);
+        const answerText = answerOption?.answer_text || '';
+        
+        return submitAnswerToAPI(questionId, answerText);
+      });
       
       await Promise.all(savePromises);
       
@@ -152,7 +158,7 @@ export default function HalamanCBT() {
         setAutoSaveStatus('idle');
       }, 3000); // Show error for 3 seconds
     }
-  }, [attemptId, answerMap, saveToLocalStorage, clearLocalStorage, submitAnswerToAPI]);
+  }, [attemptId, answerMap, saveToLocalStorage, clearLocalStorage, submitAnswerToAPI, questions]);
 
   // Update the ref whenever performAutoSave changes
   useEffect(() => {
@@ -321,12 +327,12 @@ export default function HalamanCBT() {
     }
   }
 
-  const handleSelectAnswer = async (questionId: string, answerId: number, answerText: string) => {
+  const handleSelectAnswer = async (questionId: string, answerId: string, answerText: string) => {
     if (!attemptId) {
       setErrorMsg("Silakan klik 'Mulai CBT' terlebih dahulu.");
       return;
     }
-    setAnswerMap(prev => ({ ...prev, [questionId]: String(answerId) }));
+    setAnswerMap(prev => ({ ...prev, [questionId]: answerId }));
     await submitAnswerToAPI(questionId, answerText);
   };
 
@@ -397,7 +403,7 @@ export default function HalamanCBT() {
           <QuestionCard
             question={questions[current]}
             questionNumber={current + 1}
-            selectedAnswerId={answerMap[questions[current].id] ? Number(answerMap[questions[current].id]) : null}
+            selectedAnswerId={answerMap[questions[current].id] || null}
             onSelectAnswer={handleSelectAnswer}
             apiBaseUrl={API_BASE}
           />

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Image from 'next/image';
 import { fetchWithAuth } from '@/app/utils/api';
 import { CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -171,11 +172,14 @@ export default function TestReviewPage() {
                     {question.stimulus_type === 'text' ? (
                       <p>{question.stimulus_content}</p>
                     ) : question.stimulus_type === 'image' ? (
-                      <img
-                        src={question.stimulus_content}
-                        alt="Question stimulus"
-                        className="max-w-full h-auto rounded"
-                      />
+                      <div className="relative w-full h-48">
+                        <Image
+                          src={question.stimulus_content}
+                          alt="Question stimulus"
+                          fill
+                          className="object-contain rounded"
+                        />
+                      </div>
                     ) : (
                       <div dangerouslySetInnerHTML={{ __html: question.stimulus_content }} />
                     )}

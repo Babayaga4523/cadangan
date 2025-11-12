@@ -97,9 +97,7 @@ class TestController extends Controller
             $test = CBTTest::findOrFail($id);
             Log::info("Found test with ID: {$id}");
             
-            $questions = Question::where('test_id', $id)
-                ->with(['answers:id,question_id,answer_text'])
-                ->get();
+            $questions = Question::where('test_id', $id)->get();
                 
             Log::info("Found " . $questions->count() . " questions for test {$id}");
             
@@ -108,17 +106,28 @@ class TestController extends Controller
             }
             
             $mapped = $questions->map(function ($question) {
+                // Map the question options to the expected format - always include all 4 options
+                $answers = [];
+                $optionMapping = [
+                    'A' => $question->option_a,
+                    'B' => $question->option_b,
+                    'C' => $question->option_c,
+                    'D' => $question->option_d,
+                ];
+                
+                foreach ($optionMapping as $key => $value) {
+                    $answers[] = [
+                        'id' => $key,
+                        'answer_text' => $value ?: '' // Include empty options as empty strings
+                    ];
+                }
+                
                 return [
                     'id' => $question->id,
-                    'question_text' => $question->question_text,
+                    'question_text' => $question->question,
                     'stimulus' => $question->stimulus,
                     'stimulus_type' => $question->stimulus_type,
-                    'answers' => $question->answers->map(function ($answer) {
-                        return [
-                            'id' => $answer->id,
-                            'answer_text' => $answer->answer_text
-                        ];
-                    })
+                    'answers' => $answers
                 ];
             });
 

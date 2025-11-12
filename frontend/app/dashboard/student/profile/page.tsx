@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 import { useAuthStore } from "@/app/stores/auth";
 import { fetchWithAuth } from "@/app/utils/api";
 import Link from "next/link";
@@ -12,7 +13,8 @@ import {
   Mail,
   Lock,
   Eye,
-  EyeOff
+  EyeOff,
+  CheckCircle
 } from "lucide-react";
 
 interface ProfileForm {
@@ -29,7 +31,7 @@ export default function StudentProfilePage() {
   const [profile, setProfile] = useState<ProfileForm | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -37,6 +39,7 @@ export default function StudentProfilePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const fetchProfile = useCallback(async () => {
@@ -86,6 +89,25 @@ export default function StudentProfilePage() {
     setIsSaving(true);
     setErrors({});
 
+    // Client-side validation
+    if (changePassword) {
+      if (!profile?.current_password) {
+        setErrors({ current_password: ['Kata sandi lama wajib diisi'] });
+        setIsSaving(false);
+        return;
+      }
+      if (!profile?.password) {
+        setErrors({ password: ['Kata sandi baru wajib diisi'] });
+        setIsSaving(false);
+        return;
+      }
+      if (profile.password !== profile.password_confirmation) {
+        setErrors({ password_confirmation: ['Konfirmasi kata sandi tidak cocok'] });
+        setIsSaving(false);
+        return;
+      }
+    }
+
     try {
       // If a new image was selected or user chose to remove existing photo, send multipart FormData
       if (selectedFile || removePhoto) {
@@ -129,20 +151,35 @@ export default function StudentProfilePage() {
         });
       }
 
-  // Refresh profile data and reset local file state
-  await fetchProfile();
-  setSelectedFile(null);
-  setRemovePhoto(false);
+      // Refresh profile data and reset local file state
+      await fetchProfile();
+      setSelectedFile(null);
+      setRemovePhoto(false);
+      setChangePassword(false);
 
-  router.push('/dashboard/student');
+      // Show success message
+      setSuccessMessage('Profil berhasil diperbarui!');
+      setTimeout(() => setSuccessMessage(''), 5000); // Clear after 5 seconds
+
+      // Don't redirect immediately, let user see the success message
+      // router.push('/dashboard/student');
     } catch (error: unknown) {
+      console.error('Profile update error:', error);
       if (error && typeof error === 'object' && 'response' in error) {
-        const err = error as { response?: { data?: { errors?: Record<string, string> } } };
+        const err = error as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } };
         if (err.response?.data?.errors) {
           setErrors(err.response.data.errors);
+        } else if (err.response?.data?.message) {
+          setSuccessMessage(''); // Clear any success message
+          // Show error message at the top of the form
+          setErrors({ general: [err.response.data.message] });
+        } else {
+          setSuccessMessage(''); // Clear any success message
+          setErrors({ general: ['Terjadi kesalahan saat memperbarui profil'] });
         }
       } else {
-        console.error('Error updating profile:', error);
+        setSuccessMessage(''); // Clear any success message
+        setErrors({ general: ['Terjadi kesalahan jaringan. Silakan coba lagi.'] });
       }
     } finally {
       setIsSaving(false);
@@ -285,6 +322,29 @@ export default function StudentProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Success/Error Messages */}
+        {successMessage && (
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-4 shadow-sm">
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+              <p className="text-green-800 font-medium">{successMessage}</p>
+            </div>
+          </div>
+        )}
+
+        {errors.general && (
+          <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm">
+            <div className="flex items-center">
+              <span className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                <span className="text-white text-xs">!</span>
+              </span>
+              <p className="text-red-800 font-medium">
+                {Array.isArray(errors.general) ? errors.general[0] : errors.general}
+              </p>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -297,8 +357,7 @@ export default function StudentProfilePage() {
                 <div className="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                   {previewUrl ? (
                     // preview or server-provided avatar
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    <Image src={previewUrl} alt="Avatar" width={96} height={96} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-white text-3xl font-bold">
                       {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
@@ -394,7 +453,7 @@ export default function StudentProfilePage() {
                     {errors.name && (
                       <p className="mt-2 text-sm text-red-600 flex items-center">
                         <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
-                        {errors.name}
+                        {Array.isArray(errors.name) ? errors.name[0] : errors.name}
                       </p>
                     )}
                   </div>
@@ -421,7 +480,7 @@ export default function StudentProfilePage() {
                     {errors.email && (
                       <p className="mt-2 text-sm text-red-600 flex items-center">
                         <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
-                        {errors.email}
+                        {Array.isArray(errors.email) ? errors.email[0] : errors.email}
                       </p>
                     )}
                   </div>
@@ -482,7 +541,7 @@ export default function StudentProfilePage() {
                           {errors.current_password && (
                             <p className="mt-2 text-sm text-red-600 flex items-center">
                               <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
-                              {errors.current_password}
+                              {Array.isArray(errors.current_password) ? errors.current_password[0] : errors.current_password}
                             </p>
                           )}
                         </div>
@@ -521,7 +580,7 @@ export default function StudentProfilePage() {
                           {errors.password && (
                             <p className="mt-2 text-sm text-red-600 flex items-center">
                               <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
-                              {errors.password}
+                              {Array.isArray(errors.password) ? errors.password[0] : errors.password}
                             </p>
                           )}
                         </div>
@@ -560,7 +619,7 @@ export default function StudentProfilePage() {
                           {errors.password_confirmation && (
                             <p className="mt-2 text-sm text-red-600 flex items-center">
                               <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
-                              {errors.password_confirmation}
+                              {Array.isArray(errors.password_confirmation) ? errors.password_confirmation[0] : errors.password_confirmation}
                             </p>
                           )}
                         </div>

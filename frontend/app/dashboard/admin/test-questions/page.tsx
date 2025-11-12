@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuthStore } from '@/app/stores/auth';
 import { fetchWithAuth } from '@/app/utils/api';
 import { getCsrf } from '@/app/utils/api';
@@ -1074,10 +1075,11 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                   {question.stimulus && (
                     <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
                       <div className="relative w-full h-48">
-                        <img
+                        <Image
                           src={question.stimulus}
                           alt="Preview stimulus soal"
-                          className="w-full h-full object-contain rounded-lg"
+                          fill
+                          className="object-contain rounded-lg"
                           onError={() => {
                             setImageError(true);
                           }}
@@ -1206,10 +1208,11 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                 <div className="mb-4">
                   <div className="relative w-full max-w-md mx-auto">
                     {!imageError ? (
-                      <img
+                      <Image
                         src={question.stimulus || ''}
                         alt="Stimulus"
-                        className="w-full h-auto max-h-64 rounded-lg border border-gray-300 shadow-sm object-contain"
+                        fill
+                        className="rounded-lg border border-gray-300 shadow-sm object-contain"
                         onError={() => {
                           setImageError(true);
                         }}

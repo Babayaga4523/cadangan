@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, Suspense } from 'react';
 import { fetchWithAuth } from '@/app/utils/api';
 import Link from "next/link";
 import { useSearchParams } from 'next/navigation';
@@ -33,7 +33,7 @@ interface TestOption {
   description: string | null;
 }
 
-export default function HistoryPage() {
+function HistoryContent() {
   const searchParams = useSearchParams();
   const subjectId = searchParams.get('subject_id');
 
@@ -274,5 +274,13 @@ export default function HistoryPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function HistoryPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><div className="text-gray-500">Loading...</div></div>}>
+      <HistoryContent />
+    </Suspense>
   );
 }
