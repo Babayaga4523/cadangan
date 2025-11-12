@@ -6,6 +6,7 @@ use App\Models\CBTTest;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class CBTTestController extends Controller
 {
@@ -14,24 +15,23 @@ class CBTTestController extends Controller
      */
     public function index()
     {
-        $tests = CBTTest::withCount('questions')->withCount(['attempts', 'attempts as completed_attempts' => function ($query) {
-            $query->where('status', 'completed');
-        }])->get()->map(function ($test) {
-            $averageScore = $test->attempts()->where('status', 'completed')->avg('score') ?? 0;
-            return [
-                'id' => $test->id,
-                'title' => $test->title,
-                'description' => $test->description,
-                'duration_minutes' => $test->duration_minutes,
-                'total_questions' => $test->questions_count,
-                'total_attempts' => $test->attempts_count,
-                'completed_attempts' => $test->completed_attempts,
-                'average_score' => round($averageScore, 2),
-                'created_at' => $test->created_at,
-                'updated_at' => $test->updated_at,
-            ];
-        });
-        return response()->json($tests);
+        try {
+            $tests = CBTTest::withCount('questions')->get()->map(function ($test) {
+                return [
+                    'id' => $test->id,
+                    'title' => $test->title,
+                    'description' => $test->description,
+                    'duration_minutes' => $test->duration_minutes,
+                    'total_questions' => $test->questions_count,
+                    'created_at' => $test->created_at,
+                    'updated_at' => $test->updated_at,
+                ];
+            });
+            return response()->json($tests);
+        } catch (\Exception $e) {
+            Log::error('Error fetching tests: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal server error'], 500);
+        }
     }
 
     /**

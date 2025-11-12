@@ -38,10 +38,15 @@ export async function fetchWithAuthRaw(endpoint: string, options: RequestInit = 
     // Build headers - only add Authorization if we have a real token (not "session")
     const headers: Record<string, string> = {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
       ...(options.headers as Record<string, string> || {}),
     };
+
+    // Only set Content-Type to application/json if body is not FormData
+    // FormData needs browser to set Content-Type with proper boundary
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     // Only add Bearer token if it's not the "session" placeholder
     if (token !== 'session') {

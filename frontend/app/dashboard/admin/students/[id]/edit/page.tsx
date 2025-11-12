@@ -185,7 +185,7 @@ export default function EditStudentPage() {
                       id="name"
                       value={student.name}
                       onChange={(e) => handleChange('name', e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] sm:text-sm bg-gray-50 focus:bg-white transition-colors text-black"
                       required
                     />
                   </div>
@@ -208,7 +208,7 @@ export default function EditStudentPage() {
                       id="email"
                       value={student.email}
                       onChange={(e) => handleChange('email', e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] sm:text-sm bg-gray-50 focus:bg-white transition-colors text-black"
                       required
                     />
                   </div>

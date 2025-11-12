@@ -406,12 +406,12 @@ export default function TestScoresPage() {
                       placeholder="Cari nama atau email..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-200 outline-none"
+                      className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-200 outline-none text-black placeholder-black"
                     />
                     <select
                       value={scoreFilter}
                       onChange={(e) => setScoreFilter(e.target.value as "all" | "excellent" | "good" | "needs-improvement")}
-                      className="px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-200 outline-none"
+                      className="px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-200 outline-none text-base font-medium text-gray-900"
                       aria-label="Filter berdasarkan skor"
                     >
                       <option value="all">Semua Skor</option>

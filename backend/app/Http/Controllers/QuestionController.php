@@ -30,6 +30,7 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'test_id' => 'nullable|string|exists:tests,id',
             'category_id' => 'nullable|exists:question_categories,id',
             'stimulus_type' => 'required|in:none,text,image',
             'stimulus' => 'nullable|string',
@@ -43,9 +44,8 @@ class QuestionController extends Controller
             'duration' => 'nullable|integer|min:30|max:300',
         ]);
 
-        // Map 'question' to 'question_text' for database storage
-        $validated['question_text'] = $validated['question'];
-        unset($validated['question']);
+        // Generate UUID for id since the model uses string keys
+        $validated['id'] = (string) \Illuminate\Support\Str::uuid();
 
         $question = Question::create($validated);
 
@@ -74,6 +74,7 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $validated = $request->validate([
+            'test_id' => 'nullable|string|exists:tests,id',
             'category_id' => 'nullable|exists:question_categories,id',
             'stimulus_type' => 'required|in:none,text,image',
             'stimulus' => 'nullable|string',
@@ -86,10 +87,6 @@ class QuestionController extends Controller
             'explanation' => 'nullable|string',
             'duration' => 'nullable|integer|min:30|max:300',
         ]);
-
-        // Map 'question' to 'question_text' for database storage
-        $validated['question_text'] = $validated['question'];
-        unset($validated['question']);
 
         $question->update($validated);
 

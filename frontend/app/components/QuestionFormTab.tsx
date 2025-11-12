@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { fetchWithAuth } from '@/app/utils/api';
-import Image from 'next/image';
 import { Upload, FileText, BookOpen, Image as ImageIcon } from 'lucide-react';
 
 interface Question {
@@ -175,7 +174,7 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
               value={formData.stimulus}
               onChange={(e) => handleInputChange('stimulus', e.target.value)}
               rows={4}
-              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm"
+              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm placeholder-black text-black"
               placeholder="Masukkan bacaan pendukung..."
               required
             />
@@ -186,7 +185,7 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
                   type="text"
                   value={formData.stimulus}
                   onChange={(e) => handleInputChange('stimulus', e.target.value)}
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm placeholder-black text-black"
                   placeholder="URL gambar atau pilih file..."
                   required
                 />
@@ -206,11 +205,10 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
                   <ImageIcon className="h-4 w-4 inline-block mr-2 text-gray-500" />
                   <span className="text-sm text-gray-600">Preview:</span>
                   <div className="relative w-full h-48 mt-2">
-                    <Image
+                    <img
                       src={formData.stimulus}
                       alt="Preview stimulus soal"
-                      fill
-                      className="object-contain"
+                      className="w-full h-full object-contain rounded-lg"
                       onError={() => {
                         alert('Gagal memuat gambar. Pastikan URL valid.');
                         handleInputChange('stimulus', '');
@@ -236,7 +234,7 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
           value={formData.question}
           onChange={(e) => handleInputChange('question', e.target.value)}
           rows={3}
-          className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm"
+          className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm placeholder-black text-black"
           placeholder="Masukkan pertanyaan..."
           required
         />
@@ -277,14 +275,14 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
                     {option.label}
                   </label>
                 </div>
-                <input
-                  type="text"
-                  value={formData[option.key as keyof typeof formData] as string}
-                  onChange={(e) => handleInputChange(option.key, e.target.value)}
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm"
-                  placeholder={`Pilihan ${option.label}...`}
-                  required
-                />
+                  <input
+                    type="text"
+                    value={formData[option.key as keyof typeof formData] as string}
+                    onChange={(e) => handleInputChange(option.key, e.target.value)}
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm placeholder-black text-black"
+                    placeholder={`Pilihan ${option.label}...`}
+                    required
+                  />
               </div>
             </div>
           ))}
@@ -303,7 +301,7 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
           value={formData.explanation}
           onChange={(e) => handleInputChange('explanation', e.target.value)}
           rows={3}
-          className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm"
+          className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm placeholder-black text-black"
           placeholder="Masukkan penjelasan jawaban yang benar..."
         />
       </div>
@@ -324,14 +322,15 @@ export default function QuestionFormTab({ onQuestionCreated, onSubmit }: Questio
               onChange={(e) => handleInputChange('duration', parseInt(e.target.value) || 60)}
               min="30"
               max="300"
-              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm pr-12"
+              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF661F] focus:border-[#FF661F] transition-all sm:text-sm pr-12 placeholder-black text-black"
+              placeholder="Contoh: 60"
               title="Durasi pengerjaan soal dalam detik"
             />
             <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-              <span className="text-gray-500 sm:text-sm">detik</span>
+              <span className="text-black sm:text-sm">detik</span>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-black/70 mt-2">
             Waktu yang disarankan untuk menjawab soal ini (30-300 detik)
           </p>
         </div>

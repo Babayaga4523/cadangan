@@ -30,6 +30,7 @@ Route::middleware([
     // User routes
     Route::middleware(\App\Http\Middleware\SanctumTokenAuth::class)->get('/me', [AuthController::class, 'me']);
     Route::middleware(\App\Http\Middleware\SanctumTokenAuth::class)->post('/logout', [AuthController::class, 'logout']);
+    Route::middleware(\App\Http\Middleware\SanctumTokenAuth::class)->put('/profile', [AuthController::class, 'updateProfile']);
 
     // Admin routes
     Route::middleware([\App\Http\Middleware\SanctumTokenAuth::class, \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {

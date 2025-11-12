@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import type { Question } from "@/app/types/cbt";
 
 type QuestionCardProps = {
@@ -39,13 +38,11 @@ export default function QuestionCard({
       {question.stimulus && question.stimulus_type === "image" && (
         <div className="flex justify-center mb-6">
           {/* Gunakan path langsung, bukan /storage/ */}
-          <Image
+          <img
             src={`${apiBaseUrl}${question.stimulus}`}
             alt="Stimulus Gambar"
-            width={480}
-            height={280}
-            className="rounded-xl border border-gray-200 shadow-sm object-contain"
-            style={{ maxHeight: 320, background: '#f8fafc' }}
+            className="rounded-xl border border-gray-200 shadow-sm object-contain max-w-full"
+            style={{ maxHeight: '320px', backgroundColor: '#f8fafc' }}
           />
         </div>
       )}

@@ -181,7 +181,7 @@ export default function HasilCBTPage() {
               {review?.test_title || (loading ? "Memuat judul soal..." : "Judul soal tidak tersedia")}
             </h1>
             
-            <p className="text-xs text-gray-500 mt-1 truncate">
+            <p className="text-sm text-gray-500 mt-1 truncate">
               {review?.description || "Deskripsi tidak tersedia"}
             </p>
           </div>
@@ -395,7 +395,7 @@ export default function HasilCBTPage() {
                     );
                   })}
                 </div>
-                <div className="text-xs text-gray-600 mt-3 flex gap-4">
+                <div className="text-sm text-gray-600 mt-3 flex gap-4">
                   <p>
                     <span className="inline-block w-3 h-3 bg-green-500 rounded-sm mr-1"></span>
                     Benar
@@ -449,7 +449,7 @@ export default function HasilCBTPage() {
                         <div className="border-t border-gray-300 pt-3">
                           <div className="flex items-center justify-between">
                             <p className="font-semibold text-gray-800 mb-1">Jawaban kamu : <span className="font-bold text-red-700">{qq.user_answer || "-"}</span></p>
-                            {qq.user_answer && !qq.is_correct && (<div className="text-xs text-red-700 font-semibold">✖ Jawaban kamu salah</div>)}
+                            {qq.user_answer && !qq.is_correct && (<div className="text-sm text-red-700 font-semibold">✖ Jawaban kamu salah</div>)}
                           </div>
 
                           <p className="font-semibold text-gray-800 mb-1 mt-2">Kunci Jawaban : <span className="font-bold text-green-700">{qq.correct_answer || "-"}</span></p>

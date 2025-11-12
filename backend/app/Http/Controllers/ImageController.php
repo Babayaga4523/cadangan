@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class ImageController extends Controller
 {
@@ -16,11 +18,44 @@ class ImageController extends Controller
         try {
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
+                
+                // Check if file is valid
+                if (!$file->isValid()) {
+                    return response()->json([
+                        'error' => 'Invalid file uploaded'
+                    ], 400);
+                }
+                
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('public/images', $filename);
+                
+                // Ensure the images directory exists
+                $imagesPath = storage_path('app/public/images');
+                if (!file_exists($imagesPath)) {
+                    mkdir($imagesPath, 0755, true);
+                }
+                
+                // Try to store the file
+                $path = $file->storeAs('images', $filename, 'public');
+                
+                if (!$path) {
+                    return response()->json([
+                        'error' => 'Failed to store file'
+                    ], 500);
+                }
+                
+                // Generate the URL manually to ensure it works
+                $url = URL::to('/storage/images/' . $filename);
+                
+                Log::info('Image uploaded successfully', [
+                    'filename' => $filename,
+                    'path' => $path,
+                    'url' => $url,
+                    'full_path' => storage_path('app/public/images/' . $filename)
+                ]);
                 
                 return response()->json([
-                    'url' => Storage::url($path)
+                    'url' => $url,
+                    'filename' => $filename
                 ]);
             }
 
@@ -28,6 +63,16 @@ class ImageController extends Controller
                 'error' => 'No image file uploaded'
             ], 400);
         } catch (\Exception $e) {
+            Log::error('Image upload failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file_info' => $request->hasFile('image') ? [
+                    'original_name' => $request->file('image')->getClientOriginalName(),
+                    'size' => $request->file('image')->getSize(),
+                    'mime' => $request->file('image')->getMimeType()
+                ] : null
+            ]);
+            
             return response()->json([
                 'error' => 'Failed to upload image',
                 'message' => $e->getMessage()

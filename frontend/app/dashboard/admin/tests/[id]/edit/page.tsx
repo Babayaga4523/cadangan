@@ -176,7 +176,7 @@ export default function EditTestPage() {
                     id="title"
                     value={test.title}
                     onChange={(e) => handleChange('title', e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                     required
                   />
                   {errors.title && (
@@ -194,7 +194,7 @@ export default function EditTestPage() {
                     rows={4}
                     value={test.description}
                     onChange={(e) => handleChange('description', e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                     placeholder="Deskripsi tes (opsional)"
                   />
                   {errors.description && (
@@ -214,7 +214,7 @@ export default function EditTestPage() {
                     max="480"
                     value={test.duration_minutes}
                     onChange={(e) => handleChange('duration_minutes', parseInt(e.target.value) || 30)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                     required
                   />
                   {errors.duration_minutes && (

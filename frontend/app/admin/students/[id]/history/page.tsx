@@ -141,18 +141,18 @@ export default function StudentHistoryPage() {
                       <div className="flex items-start justify-between">
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900 truncate">{a.test.title}</p>
-                          <p className="text-xs text-gray-600 mt-1 truncate">{a.test.description}</p>
+                          <p className="text-sm text-gray-600 mt-1 truncate">{a.test.description}</p>
                         </div>
                         <div className="ml-3">
                           {a.status === 'completed' ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Selesai</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">Selesai</span>
                           ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Dalam Pengerjaan</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Dalam Pengerjaan</span>
                           )}
                         </div>
                       </div>
 
-                      <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                      <div className="mt-3 flex items-center justify-between text-sm text-gray-500">
                         <div>Dimulai: {new Date(a.started_at).toLocaleDateString('id-ID')}</div>
                         <div className="flex items-center gap-2">
                           <Link href={`/cbt/hasil?attemptId=${a.id}`} className="text-sm px-3 py-1 rounded-full bg-[#FFE7DE] text-[#C24A12] font-semibold hover:bg-[#FFDCC9]">Lihat Pembahasan</Link>

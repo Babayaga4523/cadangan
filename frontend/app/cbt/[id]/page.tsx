@@ -498,7 +498,7 @@ export default function HalamanCBT() {
           
           {attemptId && testMetadata?.duration_minutes && (
             <div className="mt-4 text-sm text-gray-700">
-              
+              Durasi tes: {testMetadata.duration_minutes} menit
             </div>
           )}
         </div>

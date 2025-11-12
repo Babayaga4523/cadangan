@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { fetchWithAuth } from '@/app/utils/api';
 import { CheckCircle, XCircle, ArrowLeft } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 interface QuestionReview {
@@ -172,11 +171,9 @@ export default function TestReviewPage() {
                     {question.stimulus_type === 'text' ? (
                       <p>{question.stimulus_content}</p>
                     ) : question.stimulus_type === 'image' ? (
-                      <Image
+                      <img
                         src={question.stimulus_content}
                         alt="Question stimulus"
-                        width={500}
-                        height={300}
                         className="max-w-full h-auto rounded"
                       />
                     ) : (

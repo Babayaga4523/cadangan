@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/stores/auth";
 import { fetchWithAuth } from "@/app/utils/api";
@@ -25,7 +25,7 @@ interface ProfileForm {
 
 export default function StudentProfilePage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, logout, setUser } = useAuthStore();
   const [profile, setProfile] = useState<ProfileForm | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,6 +34,38 @@ export default function StudentProfilePage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [removePhoto, setRemovePhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const fetchProfile = useCallback(async () => {
+    try {
+      const data = await fetchWithAuth('/me');
+
+      // If backend returns user object, update central auth store so header/avatar updates across app
+      try {
+        if (setUser && typeof setUser === 'function') {
+          setUser(data);
+        }
+      } catch {}
+
+      setProfile({
+        name: data.name || '',
+        email: data.email || '',
+        // keep password fields undefined
+      });
+
+      // If server returned an avatar URL, use it for preview
+      if (data.avatar) {
+        setPreviewUrl('/storage/' + data.avatar);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setUser]);
 
   useEffect(() => {
     if (!user) {
@@ -47,21 +79,7 @@ export default function StudentProfilePage() {
     }
 
     fetchProfile();
-  }, [user, router]);
-
-  const fetchProfile = async () => {
-    try {
-      const data = await fetchWithAuth('/me');
-      setProfile({
-        name: data.name || '',
-        email: data.email || '',
-      });
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [user, router, fetchProfile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,26 +87,54 @@ export default function StudentProfilePage() {
     setErrors({});
 
     try {
-      const updateData: Record<string, string | undefined> = {
-        name: profile?.name,
-        email: profile?.email,
-      };
+      // If a new image was selected or user chose to remove existing photo, send multipart FormData
+      if (selectedFile || removePhoto) {
+        const formData = new FormData();
+        formData.append('name', profile?.name || '');
+        formData.append('email', profile?.email || '');
 
-      if (changePassword) {
-        updateData.current_password = profile?.current_password;
-        updateData.password = profile?.password;
-        updateData.password_confirmation = profile?.password_confirmation;
+        if (changePassword) {
+          if (profile?.current_password) formData.append('current_password', profile.current_password);
+          if (profile?.password) formData.append('password', profile.password);
+          if (profile?.password_confirmation) formData.append('password_confirmation', profile.password_confirmation);
+        }
+
+        if (selectedFile) {
+          formData.append('photo', selectedFile);
+        }
+
+        if (removePhoto) {
+          formData.append('remove_photo', '1');
+        }
+
+        await fetchWithAuth('/profile', {
+          method: 'PUT',
+          body: formData,
+        });
+      } else {
+        const updateData: Record<string, string | undefined> = {
+          name: profile?.name,
+          email: profile?.email,
+        };
+
+        if (changePassword) {
+          updateData.current_password = profile?.current_password;
+          updateData.password = profile?.password;
+          updateData.password_confirmation = profile?.password_confirmation;
+        }
+
+        await fetchWithAuth('/profile', {
+          method: 'PUT',
+          body: JSON.stringify(updateData),
+        });
       }
 
-      await fetchWithAuth('/profile', {
-        method: 'PUT',
-        body: JSON.stringify(updateData),
-      });
+  // Refresh profile data and reset local file state
+  await fetchProfile();
+  setSelectedFile(null);
+  setRemovePhoto(false);
 
-      // Refresh profile data
-      await fetchProfile();
-
-      router.push('/dashboard/student');
+  router.push('/dashboard/student');
     } catch (error: unknown) {
       if (error && typeof error === 'object' && 'response' in error) {
         const err = error as { response?: { data?: { errors?: Record<string, string> } } };
@@ -109,6 +155,55 @@ export default function StudentProfilePage() {
         ...profile,
         [field]: value
       });
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Try to notify backend (if endpoint exists), ignore errors
+      await fetchWithAuth('/logout', { method: 'POST' }).catch(() => {});
+    } catch {
+      // ignore
+    }
+
+    // Clear client auth state and redirect to login
+    try {
+      logout();
+    } catch {
+      // if logout is not available for some reason, try clearing localStorage
+      try {
+        localStorage.removeItem('token');
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user');
+      } catch {}
+    }
+
+    router.push('/login');
+  };
+
+  useEffect(() => {
+    // cleanup preview URL when unmounting or when selectedFile changes
+    return () => {
+      if (previewUrl && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const onFileChange = (file?: File | null) => {
+    if (!file) {
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      return;
+    }
+
+    setSelectedFile(file);
+    try {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      setRemovePhoto(false);
+    } catch {
+      setPreviewUrl(null);
     }
   };
 
@@ -170,13 +265,24 @@ export default function StudentProfilePage() {
                 <p className="text-gray-600">Kelola informasi akun dan pengaturan Anda</p>
               </div>
             </div>
-            <Link
-              href="/dashboard/student"
-              className="inline-flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 font-semibold hover:from-orange-200 hover:to-orange-300 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Kembali ke Dashboard
-            </Link>
+
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard/student"
+                className="inline-flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 font-semibold hover:from-orange-200 hover:to-orange-300 transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Kembali ke Dashboard
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center px-4 py-3 rounded-xl bg-red-50 text-red-700 font-semibold hover:bg-red-100 border border-red-100 transition-all duration-200 shadow-sm"
+              >
+                Keluar
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -188,14 +294,56 @@ export default function StudentProfilePage() {
           <div className="lg:col-span-1">
             <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
               <div className="text-center">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                  {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
+                <div className="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  {previewUrl ? (
+                    // preview or server-provided avatar
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white text-3xl font-bold">
+                      {profile?.name?.charAt(0)?.toUpperCase() || 'S'}
+                    </div>
+                  )}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">{profile?.name}</h3>
                 <p className="text-gray-600 mb-4">{profile?.email}</p>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                   Siswa Aktif
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  aria-label="Unggah foto profil"
+                  className="hidden"
+                  onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
+                />
+
+                <div className="mt-4 flex justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 shadow-sm"
+                  >
+                    Unggah Foto
+                  </button>
+
+                  {previewUrl && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setPreviewUrl(null);
+                        setRemovePhoto(true);
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                      }}
+                      className="px-3 py-1.5 rounded-md bg-red-50 border border-red-100 text-sm text-red-700 hover:bg-red-100 shadow-sm"
+                    >
+                      Hapus Foto
+                    </button>
+                  )}
                 </div>
               </div>
 

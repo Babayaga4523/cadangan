@@ -26,12 +26,25 @@ export default function StudentDashboard() {
   }
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">
-          Selamat datang, {user.name}!
-        </h1>
-        
+    <div className="min-h-screen bg-gray-50">
+      {/* Header tanpa navbar, profil dashboard, dan logo */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900">
+                Dashboard Siswa
+              </h1>
+              <p className="text-sm text-gray-500">
+                Selamat datang, {user.name}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">Ringkasan</h2>
@@ -50,13 +63,13 @@ export default function StudentDashboard() {
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">Menu Cepat</h2>
             <div className="space-y-4">
-              <button 
+              <button
                 onClick={() => router.push('/student/tests')}
                 className="w-full text-left px-4 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
               >
                 Lihat Test Tersedia
               </button>
-              <button 
+              <button
                 onClick={() => router.push('/student/history')}
                 className="w-full text-left px-4 py-2 bg-green-50 text-green-600 rounded hover:bg-green-100 transition-colors"
               >

@@ -8,7 +8,6 @@ import Link from "next/link";
 import {
   Clock,
   CheckCircle,
-  LogOut,
   BookOpen,
   Trophy
 } from "lucide-react";
@@ -35,7 +34,7 @@ interface Attempt {
 
 export default function StudentDashboard() {
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const [tests, setTests] = useState<Test[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,11 +99,6 @@ export default function StudentDashboard() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
-
   const getTestStatus = (testId: string) => {
     const attempt = attempts.find(a => a.test_id === testId);
     return attempt ? attempt.status : null;
@@ -130,29 +124,21 @@ export default function StudentDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header (card-style to match test tiles) */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-        <div className="bg-white border border-[#9BC8FF] rounded-xl p-4 shadow-sm flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#FFB28A] flex items-center justify-center text-white text-2xl font-bold">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H8c-1.1 0-2 .9-2 2v2H5a2 2 0 00-2 2v11a2 2 0 002 2h14a2 2 0 002-2V4a2 2 0 00-2-2zM8 6h9v3H8z"/></svg>
+      {/* Header (cleaned up and spaced from navbar) */}
+  <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt mb-6">
+        <div className="bg-white border border-[#9BC8FF] rounded-2xl p-6 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-4 w-full">
+            <div className="w-10 h-10 rounded-full bg-[#FFB28A] flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 2H8c-1.1 0-2 .9-2 2v2H5a2 2 0 00-2 2v11a2 2 0 002 2h14a2 2 0 002-2V4a2 2 0 00-2-2zM8 6h9v3H8z"/></svg>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard Siswa CBT</h1>
-              <p className="text-sm text-gray-700">Selamat datang, <span className="font-semibold">{user.name}</span></p>
+
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight truncate">Dashboard Siswa CBT</h1>
+              <p className="text-sm sm:text-base text-gray-600 mt-1 truncate">Selamat datang, <span className="font-semibold">{user.name}</span></p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard/student/profile" className="text-sm text-gray-700 hidden md:inline">Profil</Link>
-            <Link href="/dashboard/student" className="text-sm text-gray-700 hidden md:inline">Dashboard</Link>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center px-4 py-2 rounded-full bg-[#FFE7DE] text-[#C24A12] text-sm font-semibold hover:bg-[#FFDCC9]"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </button>
-          </div>
+
+          
         </div>
       </header>
 
@@ -246,33 +232,41 @@ export default function StudentDashboard() {
               Belum ada tes yang tersedia
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {tests.map((test) => {
                 const status = getTestStatus(test.id);
                 const score = getTestScore(test.id);
                 return (
                   <div key={test.id} className="flex justify-center">
-                    <div className="w-full max-w-md bg-white rounded-xl shadow p-6 relative overflow-hidden transition-shadow hover:shadow-lg">
-                      <div className="absolute inset-0 rounded-xl bg-[conic-gradient(from_180deg_at_50%_50%,rgba(154,200,255,0.12),transparent)] pointer-events-none"></div>
-                      <div className="relative z-10 flex flex-col items-center text-center">
-                        <div className="w-12 h-12 rounded-full bg-[#FFB28A] flex items-center justify-center text-white text-xl font-bold mb-4">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H8c-1.1 0-2 .9-2 2v2H5a2 2 0 00-2 2v11a2 2 0 002 2h14a2 2 0 002-2V4a2 2 0 00-2-2zM8 6h9v3H8z"/></svg>
-                        </div>
-                        <h3 className="text-base font-semibold text-gray-900">{test.title}</h3>
-                        <p className="text-xs text-gray-700 mt-1 mb-4">{test.description}</p>
+                    <div className="w-full max-w-md rounded-2xl bg-[#EAF6FF] p-4 shadow-sm">
+                      <div className="bg-[#E3F3FF] rounded-xl p-6 border border-[#D7EEFF] relative">
+                        <div className="text-center">
+                          <div className="w-12 h-12 mx-auto rounded-full bg-[#FFB28A] flex items-center justify-center text-white text-xl font-bold mb-4">
+                            <BookOpen className="h-5 w-5" />
+                          </div>
+                          <h3 className="text-lg sm:text-xl font-semibold text-gray-900">{test.title}</h3>
+                          <p className="text-sm text-gray-700 mt-2 mb-4">{test.description}</p>
 
-                        <div className="flex flex-col gap-2 w-full">
-                          <Link href={`/history?subject_id=${encodeURIComponent(test.title)}`} className="w-full px-4 py-2 rounded-full bg-[#FFE7DE] text-[#C24A12] text-sm font-semibold hover:bg-[#FFDCC9] transition-colors text-center">
-                            Riwayat Nilai Tes
-                          </Link>
-                          <Link href={`/cbt/${test.id}`} className="w-full px-6 py-2 rounded-full bg-[#FF661F] text-white text-sm font-semibold hover:bg-[#E6540F] transition-colors text-center">
-                            Mulai CBT
-                          </Link>
+                          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-3">
+                            <Link
+                              href={`/history?subject_id=${encodeURIComponent(test.title)}`}
+                              className="w-full sm:w-auto px-5 py-2 rounded-full bg-[#FFE7DE] text-[#C24A12] text-sm font-semibold hover:bg-[#FFDCC9] transition-colors text-center"
+                            >
+                              Riwayat Nilai Tes
+                            </Link>
+                            <Link
+                              href={`/cbt/${test.id}`}
+                              className="w-full sm:w-auto px-6 py-2 rounded-full bg-[#FF661F] text-white text-sm font-semibold hover:bg-[#E6540F] transition-colors text-center"
+                            >
+                              Mulai CBT
+                            </Link>
+                          </div>
                         </div>
+
+                        {status === 'completed' && score !== null && (
+                          <div className="absolute right-4 top-4 text-xs bg-green-50 text-green-800 px-2 py-1 rounded">Nilai: {score}</div>
+                        )}
                       </div>
-                      {status === 'completed' && score !== null && (
-                        <div className="absolute top-3 right-3 text-xs bg-green-50 text-green-800 px-2 py-1 rounded">Nilai: {score}</div>
-                      )}
                     </div>
                   </div>
                 );
@@ -295,41 +289,38 @@ export default function StudentDashboard() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {attempts.slice(0, 9).map((a) => (
-                <div key={a.id} className="w-full bg-white rounded-xl shadow p-0 overflow-hidden relative">
-                  <div className="flex">
-                    <div className="w-28 bg-[#FF661F] flex items-center justify-center p-4">
+                <div key={a.id} className="w-full bg-white rounded-2xl shadow-sm hover:shadow-md transition p-0 overflow-hidden relative">
+                  <div className="flex flex-col sm:flex-row">
+                    <div className="sm:w-28 w-full sm:flex-shrink-0 bg-[#FF661F] flex items-center justify-center p-4">
                       <div className="text-white text-center">
                         <div className="text-xs uppercase tracking-wide">Nilai</div>
-                        <div className="text-2xl font-extrabold mt-1">{a.score !== null ? Number(a.score).toFixed(0) : '-'}</div>
+                        <div className="text-2xl sm:text-3xl font-extrabold mt-1">{a.score !== null ? Number(a.score).toFixed(0) : '-'}</div>
                         <div className="text-xs mt-1">{a.status === 'completed' ? 'Selesai' : 'Berjalan'}</div>
                       </div>
                     </div>
-                    <div className="flex-1 p-4">
+
+                    <div className="flex-1 p-4 sm:p-6">
                       <div className="flex items-start justify-between">
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{a.test.title}</p>
-                          <p className="text-xs text-gray-700 mt-1 truncate">{a.test.description}</p>
+                          <p className="text-sm sm:text-base font-semibold text-gray-900 truncate">{a.test.title}</p>
+                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">{a.test.description}</p>
                         </div>
-                        <div className="ml-3">
+
+                        <div className="ml-3 flex-shrink-0">
                           {a.status === 'completed' ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Selesai</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">Selesai</span>
                           ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Dalam Pengerjaan</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Dalam Pengerjaan</span>
                           )}
                         </div>
                       </div>
 
-                      <div className="mt-3 flex flex-col space-y-2">
-                        <div className="text-xs text-gray-700">
-                          Dimulai: {new Date(a.started_at).toLocaleDateString('id-ID')}
-                        </div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Link href={`/cbt/hasil?attemptId=${a.id}`} className="text-sm px-3 py-1.5 rounded-full bg-[#FFE7DE] text-[#C24A12] font-semibold hover:bg-[#FFDCC9] transition-colors">
-                            Lihat Pembahasan
-                          </Link>
-                          <Link href={`/cbt/${a.test_id}`} className="text-sm px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
-                            Ulangi
-                          </Link>
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        <div className="text-sm text-gray-700">Dimulai: <span className="font-medium">{new Date(a.started_at).toLocaleDateString('id-ID')}</span></div>
+
+                        <div className="ml-auto flex items-center gap-2">
+                          <Link href={`/cbt/hasil?attemptId=${a.id}`} className="text-sm px-3 py-1.5 rounded-full bg-[#FFE7DE] text-[#C24A12] font-semibold hover:bg-[#FFDCC9] transition-colors">Lihat Pembahasan</Link>
+                          <Link href={`/cbt/${a.test_id}`} className="text-sm px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">Ulangi</Link>
                         </div>
                       </div>
                     </div>

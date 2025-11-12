@@ -6,7 +6,6 @@ import { useAuthStore } from '@/app/stores/auth';
 import { fetchWithAuth } from '@/app/utils/api';
 import { getCsrf } from '@/app/utils/api';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Plus,
   Edit,
@@ -310,10 +309,10 @@ export default function TestQuestionsPage() {
         )
       );
 
-      alert('Question saved successfully!');
+      alert('Soal berhasil disimpan!');
     } catch (error) {
       console.error('Error saving question:', error);
-      alert('Failed to save question. Please try again.');
+      alert('Gagal menyimpan soal. Periksa koneksi internet dan coba lagi.');
     } finally {
       setSaving(false);
     }
@@ -354,10 +353,10 @@ export default function TestQuestionsPage() {
         )
       );
 
-      alert('Question deleted successfully!');
+      alert('Soal berhasil dihapus!');
     } catch (error) {
       console.error('Error deleting question:', error);
-      alert('Failed to delete question. Please try again.');
+      alert('Gagal menghapus soal. Periksa koneksi internet dan coba lagi.');
     }
   };
 
@@ -423,11 +422,11 @@ export default function TestQuestionsPage() {
       });
       setShowCreateTestModal(false);
       
-      alert('Tes baru berhasil dibuat!');
+      alert('Tes CBT berhasil dibuat dan siap digunakan!');
     } catch (error) {
       console.error('Error creating test:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Gagal membuat tes baru: ${errorMessage}`);
+      alert(`Gagal membuat tes baru: ${errorMessage}. Periksa data yang dimasukkan dan coba lagi.`);
     } finally {
       setSaving(false);
     }
@@ -462,7 +461,7 @@ export default function TestQuestionsPage() {
 
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 pt-8">
-        <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
+        <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="relative">
@@ -495,7 +494,7 @@ export default function TestQuestionsPage() {
         <div className="mb-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div className="group">
-              <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50 hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50 hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <TestTube className="h-7 w-7" />
@@ -513,7 +512,7 @@ export default function TestQuestionsPage() {
             </div>
 
             <div className="group">
-              <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50 hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50 hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <Plus className="h-7 w-7" />
@@ -531,7 +530,7 @@ export default function TestQuestionsPage() {
             </div>
 
             <div className="group">
-              <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50 hover:shadow-2xl hover:shadow-purple-200/50 transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50 hover:shadow-2xl hover:shadow-purple-200/50 transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <FileText className="h-7 w-7" />
@@ -552,7 +551,7 @@ export default function TestQuestionsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-8 bg-red-50/80 backdrop-blur-sm border border-red-200 rounded-2xl p-6 shadow-xl shadow-red-100/50">
+          <div className="mb-8 bg-red-50 border border-red-200 rounded-2xl p-6 shadow-xl shadow-red-100/50">
             <div className="flex">
               <div className="flex-shrink-0">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white shadow-lg">
@@ -561,10 +560,16 @@ export default function TestQuestionsPage() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-bold text-red-800 mb-2">
-                  Error memuat data
+                  Gagal Memuat Data Tes
                 </h3>
                 <div className="text-sm text-red-700 mb-4">
-                  <p>{error}</p>
+                  <p>Terjadi kesalahan saat mengambil data tes dari server. Hal ini mungkin disebabkan oleh:</p>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>Koneksi internet bermasalah</li>
+                    <li>Server sedang mengalami gangguan</li>
+                    <li>Data tes tidak dapat diakses</li>
+                  </ul>
+                  <p className="mt-2">{error}</p>
                 </div>
                 <button
                   onClick={() => {
@@ -584,7 +589,7 @@ export default function TestQuestionsPage() {
 
         {/* Search Tests */}
         <div className="mb-8">
-          <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
+          <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-xl shadow-blue-100/50">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
                 <Search className="h-6 w-6" />
@@ -598,7 +603,7 @@ export default function TestQuestionsPage() {
                     placeholder="Cari berdasarkan judul atau deskripsi tes..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm"
+                    className="block w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white text-black placeholder-black"
                   />
                 </div>
               </div>
@@ -608,7 +613,7 @@ export default function TestQuestionsPage() {
 
         {/* Tests List */}
         {loading ? (
-          <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-8 shadow-xl shadow-blue-100/50">
+          <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-xl shadow-blue-100/50">
             <div className="animate-pulse space-y-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gray-200 rounded-2xl"></div>
@@ -619,7 +624,7 @@ export default function TestQuestionsPage() {
               </div>
               <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-gray-50/80 backdrop-blur-sm border border-gray-100 rounded-xl p-6">
+                  <div key={i} className="bg-gray-50 border border-gray-100 rounded-xl p-6">
                     <div className="flex items-start space-x-4">
                       <div className="w-5 h-5 bg-gray-200 rounded"></div>
                       <div className="flex-1">
@@ -637,17 +642,17 @@ export default function TestQuestionsPage() {
             </div>
           </div>
         ) : filteredTests.length === 0 ? (
-          <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-12 shadow-xl shadow-blue-100/50 text-center">
+          <div className="bg-white border border-blue-100 rounded-2xl p-12 shadow-xl shadow-blue-100/50 text-center">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
               <FileText className="h-10 w-10" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {searchTerm ? 'Tidak ada tes yang cocok' : 'Belum ada tes'}
+              {searchTerm ? 'Tidak Ada Tes yang Cocok' : 'Belum Ada Tes CBT'}
             </h3>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
               {searchTerm
-                ? 'Coba ubah kata kunci pencarian atau buat tes baru untuk memulai.'
-                : 'Mulai buat tes pertama Anda untuk mengelola soal-soal CBT dengan mudah.'
+                ? 'Coba ubah kata kunci pencarian atau hapus filter untuk melihat semua tes yang tersedia.'
+                : 'Belum ada tes CBT yang dibuat. Mulai buat tes pertama Anda untuk mengelola soal-soal CBT dengan mudah dan efisien.'
               }
             </p>
             <button
@@ -661,7 +666,7 @@ export default function TestQuestionsPage() {
         ) : (
           <div className="space-y-6">
             {filteredTests.map((test) => (
-              <div key={test.id} className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl shadow-xl shadow-blue-100/50 overflow-hidden">
+              <div key={test.id} className="bg-white border border-blue-100 rounded-2xl shadow-xl shadow-blue-100/50 overflow-hidden">
                 {/* Test Header */}
                 <div
                   className="px-8 py-6 bg-gradient-to-r from-blue-50 to-orange-50 border-b border-blue-100 cursor-pointer hover:from-blue-100 hover:to-orange-100 transition-all duration-200"
@@ -687,11 +692,11 @@ export default function TestQuestionsPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-8 text-sm">
-                      <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-blue-100">
+                      <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-blue-100">
                         <Clock className="h-4 w-4 text-blue-600" />
                         <span className="font-semibold text-gray-900">{test.duration_minutes} menit</span>
                       </div>
-                      <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl border border-green-100">
+                      <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-green-100">
                         <Users className="h-4 w-4 text-green-600" />
                         <span className="font-semibold text-gray-900">{test.total_questions} soal</span>
                       </div>
@@ -712,7 +717,7 @@ export default function TestQuestionsPage() {
                             placeholder="Cari soal dalam tes ini..."
                             value={questionSearchTerm}
                             onChange={(e) => setQuestionSearchTerm(e.target.value)}
-                            className="block w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm"
+                            className="block w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white text-black placeholder-black"
                           />
                         </div>
                       </div>
@@ -728,12 +733,12 @@ export default function TestQuestionsPage() {
                     {/* Questions List */}
                     <div className="space-y-4">
                       {test.hasError ? (
-                        <div className="text-center py-12 bg-red-50/80 backdrop-blur-sm border-2 border-red-200 rounded-xl">
+                        <div className="text-center py-12 bg-red-50 border-2 border-red-200 rounded-xl">
                           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                             <X className="h-8 w-8" />
                           </div>
-                          <h3 className="text-lg font-bold text-red-800 mb-2">Gagal memuat soal</h3>
-                          <p className="text-red-600 mb-6">Terjadi kesalahan saat memuat soal untuk tes ini</p>
+                          <h3 className="text-lg font-bold text-red-800 mb-2">Gagal Memuat Soal</h3>
+                          <p className="text-red-600 mb-6">Tidak dapat mengambil daftar soal untuk tes ini. Silakan coba lagi atau hubungi administrator jika masalah berlanjut.</p>
                           <button
                             onClick={async () => {
                               try {
@@ -764,12 +769,12 @@ export default function TestQuestionsPage() {
                             <BookOpen className="h-8 w-8" />
                           </div>
                           <h3 className="text-lg font-bold text-gray-900 mb-2">
-                            {questionSearchTerm ? 'Tidak ada soal yang cocok' : 'Belum ada soal'}
+                            {questionSearchTerm ? 'Tidak Ada Soal yang Cocok' : 'Belum Ada Soal dalam Tes Ini'}
                           </h3>
                           <p className="text-gray-600 mb-6">
                             {questionSearchTerm
-                              ? 'Coba ubah kata kunci pencarian'
-                              : 'Tambahkan soal pertama untuk tes ini'
+                              ? 'Coba ubah kata kunci pencarian untuk menemukan soal yang sesuai.'
+                              : 'Tes ini belum memiliki soal. Tambahkan soal pertama untuk melengkapi tes CBT Anda.'
                             }
                           </p>
                           {!questionSearchTerm && (
@@ -830,7 +835,7 @@ export default function TestQuestionsPage() {
                     type="text"
                     value={newTestData.title}
                     onChange={(e) => setNewTestData(prev => ({ ...prev, title: e.target.value }))}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                     placeholder="Masukkan judul tes"
                     required
                   />
@@ -844,7 +849,7 @@ export default function TestQuestionsPage() {
                     value={newTestData.description}
                     onChange={(e) => setNewTestData(prev => ({ ...prev, description: e.target.value }))}
                     rows={3}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                     placeholder="Masukkan deskripsi tes"
                   />
                 </div>
@@ -858,7 +863,7 @@ export default function TestQuestionsPage() {
                     min="1"
                     value={newTestData.duration_minutes}
                     onChange={(e) => setNewTestData(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 30 }))}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                     title="Durasi tes dalam menit"
                   />
                 </div>
@@ -872,7 +877,7 @@ export default function TestQuestionsPage() {
                       type="datetime-local"
                       value={newTestData.start_date}
                       onChange={(e) => setNewTestData(prev => ({ ...prev, start_date: e.target.value }))}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                       title="Tanggal dan waktu mulai tes"
                     />
                   </div>
@@ -885,7 +890,7 @@ export default function TestQuestionsPage() {
                       type="datetime-local"
                       value={newTestData.end_date}
                       onChange={(e) => setNewTestData(prev => ({ ...prev, end_date: e.target.value }))}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                       title="Tanggal dan waktu selesai tes"
                     />
                   </div>
@@ -901,7 +906,7 @@ export default function TestQuestionsPage() {
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                      Tes aktif (siswa dapat mengakses tes)
+                      Tes aktif dan dapat diakses siswa
                     </label>
                   </div>
 
@@ -914,7 +919,7 @@ export default function TestQuestionsPage() {
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label htmlFor="randomize_questions" className="ml-2 block text-sm text-gray-900">
-                      Acak urutan soal untuk setiap siswa
+                      Acak urutan soal untuk setiap siswa (mencegah contekan)
                     </label>
                   </div>
 
@@ -927,7 +932,7 @@ export default function TestQuestionsPage() {
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label htmlFor="show_results_immediately" className="ml-2 block text-sm text-gray-900">
-                      Tampilkan hasil tes segera setelah selesai
+                      Tampilkan skor dan pembahasan langsung setelah tes selesai
                     </label>
                   </div>
                 </div>
@@ -990,12 +995,12 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
       onUpdateField('stimulus', response.url);
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Gagal mengunggah gambar. Silakan coba lagi.');
+      alert('Gagal mengunggah gambar. Pastikan file gambar valid (JPG, PNG, GIF) dan ukuran tidak melebihi batas yang ditentukan.');
     }
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl shadow-xl shadow-blue-100/50 overflow-hidden">
+    <div className="bg-white border border-blue-100 rounded-2xl shadow-xl shadow-blue-100/50 overflow-hidden">
       {isEditing ? (
         // Edit Mode - Enhanced form like create question page
         <div className="p-8 space-y-6">
@@ -1006,9 +1011,9 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
             </label>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { value: 'none', label: 'Tanpa Stimulus', desc: 'Soal langsung tanpa bacaan/gambar', icon: BookOpen },
-                { value: 'text', label: 'Stimulus Teks', desc: 'Dengan bacaan pendukung', icon: FileText },
-                { value: 'image', label: 'Stimulus Gambar', desc: 'Dengan gambar pendukung', icon: Upload },
+                { value: 'none', label: 'Tanpa Stimulus', desc: 'Soal langsung tanpa teks atau gambar tambahan', icon: BookOpen },
+                { value: 'text', label: 'Stimulus Teks', desc: 'Soal dengan bacaan atau teks pendukung', icon: FileText },
+                { value: 'image', label: 'Stimulus Gambar', desc: 'Soal dengan gambar atau ilustrasi pendukung', icon: Upload },
               ].map((option) => (
                 <div
                   key={option.value}
@@ -1016,7 +1021,7 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                   className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all hover:shadow-md ${
                     question.stimulus_type === option.value
                       ? 'border-orange-300 bg-gradient-to-br from-orange-50 to-orange-25 shadow-lg scale-[1.02]'
-                      : 'border-gray-200 bg-white/50 backdrop-blur-sm hover:border-gray-300'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 mb-3">
@@ -1042,8 +1047,8 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                   value={question.stimulus || ''}
                   onChange={(e) => onUpdateField('stimulus', e.target.value)}
                   rows={4}
-                  className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm"
-                  placeholder="Masukkan bacaan pendukung..."
+                  className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white text-black placeholder-black"
+                  placeholder="Masukkan teks bacaan atau konteks pendukung untuk soal..."
                 />
               ) : (
                 <div className="space-y-4">
@@ -1052,7 +1057,7 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                       type="text"
                       value={question.stimulus || ''}
                       onChange={(e) => onUpdateField('stimulus', e.target.value)}
-                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm"
+                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white text-black placeholder-black"
                       placeholder="URL gambar atau pilih file..."
                     />
                     <label className="inline-flex items-center px-4 py-3 border-2 border-orange-500 shadow-sm text-sm font-medium rounded-xl text-orange-500 bg-white hover:bg-orange-50 cursor-pointer transition-colors">
@@ -1067,13 +1072,12 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                     </label>
                   </div>
                   {question.stimulus && (
-                    <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50/80 backdrop-blur-sm">
+                    <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
                       <div className="relative w-full h-48">
-                        <Image
+                        <img
                           src={question.stimulus}
                           alt="Preview stimulus soal"
-                          fill
-                          className="object-contain rounded-lg"
+                          className="w-full h-full object-contain rounded-lg"
                           onError={() => {
                             setImageError(true);
                           }}
@@ -1095,7 +1099,7 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
               value={question.question}
               onChange={(e) => onUpdateField('question', e.target.value)}
               rows={3}
-              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm resize-none"
+              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white resize-none text-black placeholder-black"
               placeholder="Masukkan pertanyaan..."
             />
           </div>
@@ -1129,9 +1133,9 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                   </div>
                   <input
                     type="text"
-                    value={(question as Record<'option_a' | 'option_b' | 'option_c' | 'option_d', string>)[option.key as 'option_a' | 'option_b' | 'option_c' | 'option_d']}
+                    value={(question as Record<'option_a' | 'option_b' | 'option_c' | 'option_d', string>)[option.key as 'option_a' | 'option_b' | 'option_c' | 'option_d'] || ''}
                     onChange={(e) => onUpdateField(option.key, e.target.value)}
-                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm"
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white text-black placeholder-black"
                     placeholder={`Pilihan ${option.label}...`}
                   />
                 </div>
@@ -1148,7 +1152,7 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
               value={question.explanation || ''}
               onChange={(e) => onUpdateField('explanation', e.target.value)}
               rows={3}
-              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm resize-none"
+              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white resize-none text-black placeholder-black"
               placeholder="Masukkan penjelasan jawaban yang benar..."
             />
           </div>
@@ -1164,7 +1168,7 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
               onChange={(e) => onUpdateField('duration', parseInt(e.target.value))}
               min="30"
               max="300"
-              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white/50 backdrop-blur-sm"
+              className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all sm:text-sm bg-white text-black placeholder-black"
               placeholder="60"
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -1202,13 +1206,10 @@ function QuestionCard({ question, onEdit, onCancel, onSave, onDelete, onUpdateFi
                 <div className="mb-4">
                   <div className="relative w-full max-w-md mx-auto">
                     {!imageError ? (
-                      <Image
-                        src={`http://127.0.0.1:8000/${question.stimulus}`}
+                      <img
+                        src={question.stimulus || ''}
                         alt="Stimulus"
-                        width={400}
-                        height={300}
                         className="w-full h-auto max-h-64 rounded-lg border border-gray-300 shadow-sm object-contain"
-                        unoptimized={true}
                         onError={() => {
                           setImageError(true);
                         }}

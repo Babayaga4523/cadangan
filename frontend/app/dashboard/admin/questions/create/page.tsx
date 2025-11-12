@@ -119,7 +119,7 @@ export default function CreateQuestionPage() {
                     value={formData.stimulus}
                     onChange={(e) => handleInputChange('stimulus', e.target.value)}
                     rows={4}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                     placeholder="Masukkan bacaan pendukung..."
                     required
                   />
@@ -129,7 +129,7 @@ export default function CreateQuestionPage() {
                       type="url"
                       value={formData.stimulus}
                       onChange={(e) => handleInputChange('stimulus', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                       placeholder="https://example.com/image.jpg"
                       required
                     />
@@ -150,7 +150,7 @@ export default function CreateQuestionPage() {
                 value={formData.question}
                 onChange={(e) => handleInputChange('question', e.target.value)}
                 rows={3}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                 placeholder="Masukkan pertanyaan..."
                 required
               />
@@ -188,7 +188,7 @@ export default function CreateQuestionPage() {
                         type="text"
                         value={formData[option.key as keyof typeof formData] as string}
                         onChange={(e) => handleInputChange(option.key, e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                         placeholder={`Pilihan ${option.label}...`}
                         required
                       />
@@ -207,7 +207,7 @@ export default function CreateQuestionPage() {
                 value={formData.explanation}
                 onChange={(e) => handleInputChange('explanation', e.target.value)}
                 rows={3}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black placeholder-black"
                 placeholder="Masukkan penjelasan jawaban yang benar..."
               />
             </div>
@@ -223,7 +223,7 @@ export default function CreateQuestionPage() {
                 onChange={(e) => handleInputChange('duration', parseInt(e.target.value) || 60)}
                 min="30"
                 max="300"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                 title="Durasi pengerjaan soal dalam detik"
               />
               <p className="text-xs text-gray-500 mt-1">
